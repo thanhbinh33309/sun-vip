@@ -1,0 +1,87 @@
+</section>
+
+<section id="account" class="page">
+  <div class="banner">
+    <h2>👤 TÀI KHOẢN DEMO</h2>
+    <p>Tài khoản thử nghiệm trên trình duyệt hiện tại.</p>
+  </div>
+  <div class="balance">
+    Điểm ảo hiện tại
+    <strong id="balance2">1000</strong>
+    <button class="primary" onclick="resetDemo()">Khởi tạo lại demo</button>
+  </div>
+  <p class="note">
+    Đây là bản demo chạy trên trình duyệt, chưa có hệ thống đăng nhập
+    hoặc máy chủ lưu dữ liệu. Không nhập mật khẩu hay thông tin cá nhân.
+  </p>
+</section>
+
+</main>
+
+<footer>
+  LUCKY CLUB · BẢN DEMO GIẢI TRÍ<br>
+  Điểm ảo không có giá trị tiền tệ, không hỗ trợ nạp hoặc rút tiền.
+</footer>
+
+<script>
+let balance = 1000;
+let historyData = [];
+
+const symbols = ["⚀","⚁","⚂","⚃","⚄","⚅"];
+
+function showPage(id, btn) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("show"));
+  document.getElementById(id).classList.add("show");
+
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function rollDice() {
+  const d1 = Math.floor(Math.random()*6)+1;
+  const d2 = Math.floor(Math.random()*6)+1;
+  const d3 = Math.floor(Math.random()*6)+1;
+  const sum = d1+d2+d3;
+
+  document.getElementById("dice").textContent =
+    symbols[d1-1]+" "+symbols[d2-1]+" "+symbols[d3-1];
+
+  document.getElementById("total").textContent = "Tổng: "+sum;
+
+  let label = sum <= 10 ? "Tổng thấp" : "Tổng cao";
+  document.getElementById("outcome").textContent = label;
+
+  historyData.unshift({
+    time:new Date().toLocaleTimeString("vi-VN"),
+    dice:d1+" - "+d2+" - "+d3,
+    sum:sum
+  });
+
+  historyData = historyData.slice(0,30);
+  renderHistory();
+}
+
+function renderHistory() {
+  const body = document.getElementById("history");
+
+  if (historyData.length === 0) {
+    body.innerHTML = '<tr><td colspan="3">Chưa có kết quả.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = historyData.map(item =>
+    <tr><td>${item.time}</td><td>${item.dice}</td><td>${item.sum}</td></tr>
+  ).join("");
+}
+
+function updateBalance() {
+  document.getElementById("balance").textContent = balance;
+  document.getElementById("balance2").textContent = balance;
+}
+
+function clearHistory() {
+  historyData = [];
+  renderHistory();
+}
